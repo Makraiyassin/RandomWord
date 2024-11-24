@@ -148,7 +148,7 @@
                 let seconds = timeRemaining % 60;
                 timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-                if (timeRemaining <= 10) {
+                if (timeRemaining <= 10 && timeRemaining > 0) {
                     timerElement.classList.add("shake");
                 } else {
                     timerElement.classList.remove("shake");
