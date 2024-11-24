@@ -105,7 +105,7 @@
 
         // Choisir un mot aléatoire dans la liste et l'afficher
         randomNumber = Math.floor(Math.random() * words.length);
-        let timeRemaining = 60; // Temps restant en secondes
+        let timeRemaining = 20; // Temps restant en secondes
         word.innerText = words[randomNumber]; // Afficher le mot
         words.splice(randomNumber, 1); // Supprimer le mot pour ne pas le réutiliser
 
@@ -115,7 +115,7 @@
             let seconds = timeRemaining % 60;
 
             // Appliquer l'animation "secousse" si le temps restant est inférieur ou égal à 10 secondes
-            if (timeRemaining <= 10) {
+            if (timeRemaining <= 10 && timeRemaining > 0) {
                 timer.classList.add("shake");
             } else {
                 timer.classList.remove("shake");
