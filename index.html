@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Word</title>
+    <title>Random Word Game</title>
     <style>
         /* Styles généraux */
         body {
@@ -41,6 +41,27 @@
             transition: transform 0.3s;
         }
 
+        /* Style pour les boutons */
+        .btn {
+            font-size: 1rem;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #4a90e2;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background-color: #357ab7;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
         /* Animation de secousse pour le timer à 10 secondes ou moins */
         .shake {
             animation: shake 0.5s;
@@ -53,87 +74,134 @@
             50% { transform: translateX(5px); }
             75% { transform: translateX(-5px); }
         }
-
-        /* Style pour le bouton */
-        #ok {
-            font-size: 1rem;
-            padding: 10px 20px;
-            color: #fff;
-            background-color: #4a90e2;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        #ok:hover {
-            background-color: #357ab7;
-        }
-
-        #ok:active {
-            transform: scale(0.95);
-        }
     </style>
 </head>
 <body>
-   <h1 id="word">***************</h1>
-   <div id="timer">00:00</div> 
-   <div>
-       <input id="ok" type="button" value="ok">
-   </div>
+    <!-- Configuration initiale -->
+    <div id="setup">
+        <h2>Temps du jeu (en secondes) :</h2>
+        <input id="duration" type="number" min="1" placeholder="Entrez le nombre de secondes" required>
+        <button class="btn" id="start">Démarrer</button>
+    </div>
 
-   <!-- Inclusion du fichier words.js -->
-   <script src="words.js"></script>
+    <!-- Affichage du jeu -->
+    <div id="game" style="display: none;">
+        <h1 id="word">***************</h1>
+        <div id="timer">00:00</div> 
+        <div>
+            <button class="btn" id="ok" style="background-color: green;">OK</button>
+            <button class="btn" id="pass">Passer</button>
+        </div>
+    </div>
 
-   <script>
-    // Afficher le nombre de mots dans la console (pour vérifier)
-    console.log(words.length);
+    <!-- Affichage du résultat final -->
+    <div id="result" style="display: none;">
+        <h2>Temps écoulé !</h2>
+        <p id="score"></p>
+        <ul id="found-words"></ul>
+        <button class="btn" id="refresh">réinitialiser</button>
+    </div>
 
-    let word = document.getElementById("word");
-    let timer = document.getElementById("timer");
-    let okBtn = document.getElementById("ok");
+    <!-- Inclusion du fichier words.js -->
+    <script src="words.js"></script>
 
-    let countdown; // Variable pour stocker l'ID du minuteur en cours
-    let randomNumber;
+    <script>
+        let wordElement = document.getElementById("word");
+        let timerElement = document.getElementById("timer");
+        let durationInput = document.getElementById("duration");
+        let startButton = document.getElementById("start");
+        let okButton = document.getElementById("ok");
+        let passButton = document.getElementById("pass");
+        let refreshButton = document.getElementById("refresh");
+        let setupDiv = document.getElementById("setup");
+        let gameDiv = document.getElementById("game");
+        let resultDiv = document.getElementById("result");
+        let scoreElement = document.getElementById("score");
+        let foundWordsElement = document.getElementById("found-words");
 
-    okBtn.addEventListener("click", function() {
-        // Si un minuteur est déjà en cours, l'arrêter avant de démarrer un nouveau
-        if (countdown) {
-            clearInterval(countdown);
+        let countdown; // ID du minuteur
+        let timeRemaining; // Temps défini par l'utilisateur
+        let foundWords = []; // Liste des mots trouvés
+
+        // Fonction pour démarrer le jeu
+        startButton.addEventListener("click", function() {
+            timeRemaining = parseInt(durationInput.value);
+            if (isNaN(timeRemaining) || timeRemaining <= 0) {
+                alert("Veuillez entrer un nombre de secondes valide.");
+                return;
+            }
+            setupDiv.style.display = "none";
+            gameDiv.style.display = "block";
+
+            startTimer();
+            showNewWord();
+        });
+
+        refreshButton.addEventListener("click", function(){
+            location.reload();
+        })
+
+        // Fonction pour démarrer le minuteur
+        function startTimer() {
+            countdown = setInterval(() => {
+                let minutes = Math.floor(timeRemaining / 60);
+                let seconds = timeRemaining % 60;
+                timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                if (timeRemaining <= 10) {
+                    timerElement.classList.add("shake");
+                } else {
+                    timerElement.classList.remove("shake");
+                }
+
+                if (timeRemaining <= 0) {
+                    clearInterval(countdown);
+                    endGame();
+                }
+                timeRemaining--;
+            }, 1000);
         }
 
-        // Choisir un mot aléatoire dans la liste et l'afficher
-        randomNumber = Math.floor(Math.random() * words.length);
-        let timeRemaining = 60; // Temps restant en secondes
-        word.innerText = words[randomNumber]; // Afficher le mot
-        words.splice(randomNumber, 1); // Supprimer le mot pour ne pas le réutiliser
-
-        // Démarrer le minuteur
-        countdown = setInterval(() => {
-            let minutes = Math.floor(timeRemaining / 60);
-            let seconds = timeRemaining % 60;
-
-            // Appliquer l'animation "secousse" si le temps restant est inférieur ou égal à 10 secondes
-            if (timeRemaining <= 10) {
-                timer.classList.add("shake");
-            } else {
-                timer.classList.remove("shake");
+        // Fonction pour afficher un nouveau mot
+        function showNewWord() {
+            if (words.length === 0) {
+                endGame();
+                return;
             }
+            let randomIndex = Math.floor(Math.random() * words.length);
+            wordElement.innerText = words[randomIndex];
+        }
 
-            // Mettre à jour l'affichage du minuteur
-            timer.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            
-            // Décrémenter le temps restant
-            timeRemaining--; 
-
-            // Si le temps est écoulé, arrêter le minuteur et afficher "Temps écoulé !"
-            if (timeRemaining < 0) {
-                clearInterval(countdown);
-                timer.textContent = "Temps écoulé !";
+        // Bouton "OK" pour valider un mot
+        okButton.addEventListener("click", function() {
+            let currentWord = wordElement.innerText;
+            if (!foundWords.includes(currentWord)) {
+                foundWords.push(currentWord);
             }
-        }, 1000); // Met à jour toutes les secondes
-    });
-   </script>
+            words.splice(words.indexOf(currentWord), 1); // Supprimer le mot de la liste
+            showNewWord(); // Afficher un nouveau mot
+        });
+
+        // Bouton "Passer" pour passer au mot suivant
+        passButton.addEventListener("click", function() {
+            showNewWord(); // Afficher un nouveau mot sans le valider
+        });
+
+        // Fonction pour afficher les résultats finaux
+        function endGame() {
+            gameDiv.style.display = "none";
+            resultDiv.style.display = "block";
+
+            scoreElement.innerText = `Nombre de mots trouvés : ${foundWords.length}`;
+            foundWordsElement.innerHTML = ""; // Effacer la liste
+
+            // Afficher tous les mots trouvés
+            foundWords.forEach(word => {
+                let li = document.createElement("li");
+                li.textContent = word;
+                foundWordsElement.appendChild(li);
+            });
+        }
+    </script>
 </body>
 </html>
