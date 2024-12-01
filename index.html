@@ -1,207 +1,286 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Word Game</title>
+    <title>Chapi chapeau</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Styles généraux */
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
+            background-color: #f8f9fa;
             font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            color: #333;
         }
 
-        /* Style pour le mot à deviner */
-        #word {
+        #game,
+        #result,
+        #summary {
+            text-align: center;
+        }
+
+        #timer {
             font-size: 2rem;
             font-weight: bold;
-            letter-spacing: 5px;
-            color: #4a90e2;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
 
-        /* Style pour le minuteur */
-        #timer {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ff6347;
-            padding: 10px 20px;
-            border: 2px solid #ff6347;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-            transition: transform 0.3s;
-        }
-
-        /* Style pour les boutons */
         .btn {
-            font-size: 1rem;
-            padding: 10px 20px;
-            color: #fff;
-            background-color: #4a90e2;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
             margin: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .btn:hover {
-            background-color: #357ab7;
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Animation de secousse pour le timer à 10 secondes ou moins */
-        .shake {
-            animation: shake 0.5s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
+        #final-scores li {
+            font-size: 1.2rem;
+            margin: 10px 0;
         }
     </style>
 </head>
-<body>
-    <!-- Configuration initiale -->
-    <div id="setup">
-        <h2>Temps du jeu (en secondes) :</h2>
-        <input id="duration" type="number" min="1" placeholder="Entrez le nombre de secondes" required>
-        <button class="btn" id="start">Démarrer</button>
-    </div>
 
-    <!-- Affichage du jeu -->
-    <div id="game" style="display: none;">
-        <h1 id="word">***************</h1>
-        <div id="timer">00:00</div> 
-        <div>
-            <button class="btn" id="ok" style="background-color: green;">OK</button>
-            <button class="btn" id="pass">Passer</button>
+<body>
+    <div class="container py-5">
+        <!-- Configuration initiale -->
+        <div id="setup" class="text-center">
+            <h2 class="mb-4">Configuration du jeu</h2>
+            <div id="team-config" class="mb-3">
+                <h3>Équipes :</h3>
+                <div class="team mb-2">
+                    <input type="text" class="form-control mb-2" value="Équipe 1" required>
+                </div>
+                <div class="team mb-2">
+                    <input type="text" class="form-control mb-2" value="Équipe 2" required>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mb-3">
+                <button id="add-team" class="btn btn-outline-primary me-2">Ajouter une équipe</button>
+                <button id="remove-team" class="btn btn-outline-danger">Supprimer une équipe</button>
+            </div>
+            <div class="mb-4">
+                <h3>Temps par tour (en secondes) :</h3>
+                <input id="duration" type="number" class="form-control w-50 mx-auto" min="1"
+                    placeholder="Entrez le temps par tour" required>
+            </div>
+            <button class="btn btn-success btn-lg" id="start">Démarrer</button>
+        </div>
+
+        <!-- Jeu -->
+        <div id="game" class="d-none text-center">
+            <h1 id="current-team" class="mb-4"></h1>
+            <h1 id="word" class="display-3 fw-bold">***************</h1>
+            <div id="timer" class="text-danger my-3">00:00</div>
+            <div>
+                <button class="btn btn-success btn-lg" id="ok">OK</button>
+                <button class="btn btn-secondary btn-lg" id="pass">Passer</button>
+            </div>
+        </div>
+
+        <!-- Résumé -->
+        <div id="summary" class="d-none text-center">
+            <h2 class="mb-4">Résumé de la manche</h2>
+            <ul id="current-scores" class="list-unstyled"></ul>
+            <div id="found-words" class="mb-4"></div>
+            <button class="btn btn-primary btn-lg" id="next-round">Passer à la manche suivante</button>
+        </div>
+
+        <!-- Résultats -->
+        <div id="result" class="d-none text-center">
+            <h2 class="mb-4">Jeu terminé !</h2>
+            <ul id="final-scores" class="list-unstyled"></ul>
+            <button class="btn btn-primary btn-lg" id="refresh">Réinitialiser</button>
         </div>
     </div>
 
-    <!-- Affichage du résultat final -->
-    <div id="result" style="display: none;">
-        <h2>Temps écoulé !</h2>
-        <p id="score"></p>
-        <ul id="found-words"></ul>
-        <button class="btn" id="refresh">réinitialiser</button>
-    </div>
-
-    <!-- Inclusion du fichier words.js -->
     <script src="words.js"></script>
-
+    
     <script>
-        let wordElement = document.getElementById("word");
-        let timerElement = document.getElementById("timer");
-        let durationInput = document.getElementById("duration");
-        let startButton = document.getElementById("start");
-        let okButton = document.getElementById("ok");
-        let passButton = document.getElementById("pass");
-        let refreshButton = document.getElementById("refresh");
-        let setupDiv = document.getElementById("setup");
-        let gameDiv = document.getElementById("game");
-        let resultDiv = document.getElementById("result");
-        let scoreElement = document.getElementById("score");
-        let foundWordsElement = document.getElementById("found-words");
+        // Variables globales
+        let teams = ["Équipe 1", "Équipe 2"];
+        let scores = {};
+        let foundWords = {};
+        let currentTeamIndex = 0;
+        let round = 1;
+        let wordsLeft = [...words];
+        let countdown;
+        let timeRemaining;
 
-        let countdown; // ID du minuteur
-        let timeRemaining; // Temps défini par l'utilisateur
-        let foundWords = []; // Liste des mots trouvés
+        // Initialisation des éléments DOM
+        const addTeamButton = document.getElementById("add-team");
+        const removeTeamButton = document.getElementById("remove-team");
+        const teamConfigDiv = document.getElementById("team-config");
+        const setupDiv = document.getElementById("setup");
+        const gameDiv = document.getElementById("game");
+        const summaryDiv = document.getElementById("summary");
+        const resultDiv = document.getElementById("result");
+        const startButton = document.getElementById("start");
+        const refreshButton = document.getElementById("refresh");
+        const durationInput = document.getElementById("duration");
+        const currentTeamElement = document.getElementById("current-team");
+        const wordElement = document.getElementById("word");
+        const timerElement = document.getElementById("timer");
+        const okButton = document.getElementById("ok");
+        const passButton = document.getElementById("pass");
+        const nextRoundButton = document.getElementById("next-round");
+        const currentScoresElement = document.getElementById("current-scores");
+        const foundWordsDiv = document.getElementById("found-words");
+        const finalScoresElement = document.getElementById("final-scores");
 
-        // Fonction pour démarrer le jeu
-        startButton.addEventListener("click", function() {
-            timeRemaining = parseInt(durationInput.value);
-            if (isNaN(timeRemaining) || timeRemaining <= 0) {
-                alert("Veuillez entrer un nombre de secondes valide.");
-                return;
+        // Ajouter une équipe
+        addTeamButton.addEventListener("click", () => {
+            if (teams.length < 6) {
+                let teamInput = document.createElement("div");
+                teamInput.classList.add("team", "mb-2");
+                teamInput.innerHTML = `<input type="text" class="form-control" value="Équipe ${teams.length + 1}" required>`;
+                teamConfigDiv.appendChild(teamInput);
+                teams.push(`Équipe ${teams.length + 1}`);
             }
-            setupDiv.style.display = "none";
-            gameDiv.style.display = "block";
-
-            startTimer();
-            showNewWord();
         });
 
-        refreshButton.addEventListener("click", function(){
-            location.reload();
-        })
+        // Supprimer une équipe
+        removeTeamButton.addEventListener("click", () => {
+            if (teams.length > 2) {
+                teamConfigDiv.lastElementChild.remove();
+                teams.pop();
+            }
+        });
 
-        // Fonction pour démarrer le minuteur
+        // Démarrer le jeu
+        startButton.addEventListener("click", () => {
+            timeRemaining = parseInt(durationInput.value);
+            if (isNaN(timeRemaining) || timeRemaining <= 0) {
+                alert("Veuillez entrer un temps par tour valide.");
+                return;
+            }
+
+            scores = {};
+            foundWords = {};
+            let teamInputs = teamConfigDiv.querySelectorAll(".team input");
+            teams = [];
+            teamInputs.forEach(input => {
+                let teamName = input.value.trim();
+                if (teamName) {
+                    teams.push(teamName);
+                    scores[teamName] = 0;
+                    foundWords[teamName] = [];
+                }
+            });
+
+            setupDiv.classList.add("d-none");
+            gameDiv.classList.remove("d-none");
+
+            startTurn();
+        });
+
+        // Commencer un tour
+        function startTurn() {
+            timeRemaining = parseInt(durationInput.value); // Réinitialiser le temps
+            currentTeamElement.textContent = `Tour de : ${teams[currentTeamIndex]}`;
+            showNewWord();
+            startTimer();
+        }
+
+        // Passer à l'équipe suivante
+        function nextTeam() {
+            currentTeamIndex = (currentTeamIndex + 1) % teams.length; // Passer à l'équipe suivante
+            if (currentTeamIndex === 0) { // Si on revient à la première équipe, la manche est terminée
+                showSummary();
+                return;
+            }
+            if(confirm("Tour terminé ! Passer au tour suivant ?")){
+                startTurn(); // Commencer le tour suivant
+            }
+        }
+
+        // Minuteur
         function startTimer() {
+            clearInterval(countdown);
             countdown = setInterval(() => {
                 let minutes = Math.floor(timeRemaining / 60);
                 let seconds = timeRemaining % 60;
                 timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-                if (timeRemaining <= 10 && timeRemaining > 0) {
-                    timerElement.classList.add("shake");
-                } else {
-                    timerElement.classList.remove("shake");
-                }
-
                 if (timeRemaining <= 0) {
                     clearInterval(countdown);
-                    endGame();
+                    nextTeam();
                 }
                 timeRemaining--;
             }, 1000);
         }
 
-        // Fonction pour afficher un nouveau mot
+        // Afficher un nouveau mot
         function showNewWord() {
-            if (words.length === 0) {
-                endGame();
+            if (wordsLeft.length === 0) {
+                showSummary();
                 return;
             }
-            let randomIndex = Math.floor(Math.random() * words.length);
-            wordElement.innerText = words[randomIndex];
+            let randomIndex = Math.floor(Math.random() * wordsLeft.length);
+            wordElement.innerText = wordsLeft[randomIndex];
         }
 
         // Bouton "OK" pour valider un mot
-        okButton.addEventListener("click", function() {
+        okButton.addEventListener("click", () => {
             let currentWord = wordElement.innerText;
-            if (!foundWords.includes(currentWord)) {
-                foundWords.push(currentWord);
-            }
-            words.splice(words.indexOf(currentWord), 1); // Supprimer le mot de la liste
-            showNewWord(); // Afficher un nouveau mot
+            scores[teams[currentTeamIndex]]++;
+            foundWords[teams[currentTeamIndex]].push(currentWord);
+            wordsLeft.splice(wordsLeft.indexOf(currentWord), 1);
+            showNewWord();
         });
 
         // Bouton "Passer" pour passer au mot suivant
-        passButton.addEventListener("click", function() {
-            showNewWord(); // Afficher un nouveau mot sans le valider
+        passButton.addEventListener("click", showNewWord);
+
+        // Afficher le récapitulatif de la manche
+        function showSummary() {
+            clearInterval(countdown);
+            gameDiv.classList.add("d-none");
+            summaryDiv.classList.remove("d-none");
+
+            currentScoresElement.innerHTML = "";
+            foundWordsDiv.innerHTML = "";
+
+            for (let team in scores) {
+                let scoreLi = document.createElement("li");
+                scoreLi.textContent = `${team} : ${scores[team]} points`;
+                currentScoresElement.appendChild(scoreLi);
+
+                let wordsP = document.createElement("p");
+                wordsP.textContent = `${team} a trouvé : ${foundWords[team].join(", ")}`;
+                foundWordsDiv.appendChild(wordsP);
+            }
+        }
+
+        // Passer à la manche suivante
+        nextRoundButton.addEventListener("click", () => {
+            round++;
+            if (round > 4) {
+                endGame();
+                return;
+            }
+
+            // Préparer les mots pour la prochaine manche
+            wordsLeft = [];
+            for (let team in foundWords) {
+                wordsLeft.push(...foundWords[team]);
+            }
+
+            currentTeamIndex = 0;
+            summaryDiv.classList.add("d-none");
+            gameDiv.classList.remove("d-none");
+            timeRemaining = parseInt(durationInput.value);
+            startTurn();
         });
 
-        // Fonction pour afficher les résultats finaux
+        // Fin du jeu
         function endGame() {
-            gameDiv.style.display = "none";
-            resultDiv.style.display = "block";
-
-            scoreElement.innerText = `Nombre de mots trouvés : ${foundWords.length}`;
-            foundWordsElement.innerHTML = ""; // Effacer la liste
-
-            // Afficher tous les mots trouvés
-            foundWords.forEach(word => {
+            resultDiv.classList.remove("d-none");
+            finalScoresElement.innerHTML = "";
+            for (let team in scores) {
                 let li = document.createElement("li");
-                li.textContent = word;
-                foundWordsElement.appendChild(li);
-            });
+                li.textContent = `${team} : ${scores[team]} points`;
+                finalScoresElement.appendChild(li);
+            }
         }
+
+        // Réinitialisation du jeu
+        refreshButton.addEventListener("click", () => location.reload());
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
