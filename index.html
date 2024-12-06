@@ -259,6 +259,9 @@
                 wordsLeft.push(...foundWords[team]);
             }
 
+            const setWords = new Set(wordsLeft);
+            wordsLeft = [...setWords];
+
             currentTeamIndex = 0;
             summaryDiv.classList.add("d-none");
             gameDiv.classList.remove("d-none");
