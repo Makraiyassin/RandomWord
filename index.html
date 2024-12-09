@@ -40,18 +40,18 @@
         <!-- Configuration initiale -->
         <div id="setup" class="text-center">
             <h2 class="mb-4">Configuration du jeu</h2>
-            <div id="team-config" class="mb-3">
-                <h3>Équipes :</h3>
-                <div class="team mb-2">
-                    <input type="text" class="form-control mb-2" value="Équipe 1" required>
+            <div id="player-config" class="mb-3">
+                <h3>Joueurs :</h3>
+                <div class="player mb-2">
+                    <input type="text" class="form-control mb-2" value="Joueur 1" required>
                 </div>
-                <div class="team mb-2">
-                    <input type="text" class="form-control mb-2" value="Équipe 2" required>
+                <div class="player mb-2">
+                    <input type="text" class="form-control mb-2" value="Joueur 2" required>
                 </div>
             </div>
             <div class="d-flex justify-content-center mb-3">
-                <button id="add-team" class="btn btn-outline-primary me-2">Ajouter une équipe</button>
-                <button id="remove-team" class="btn btn-outline-danger">Supprimer une équipe</button>
+                <button id="add-player" class="btn btn-outline-primary me-2">Ajouter un joueur</button>
+                <button id="remove-player" class="btn btn-outline-danger">Supprimer un joueur</button>
             </div>
             <div class="mb-4">
                 <h3>Temps par tour (en secondes) :</h3>
@@ -63,7 +63,7 @@
 
         <!-- Jeu -->
         <div id="game" class="d-none text-center">
-            <h1 id="current-team" class="mb-4"></h1>
+            <h1 id="current-player" class="mb-4"></h1>
             <h1 id="word" class="display-3 fw-bold">***************</h1>
             <div id="timer" class="text-danger my-3">00:00</div>
             <div>
@@ -92,19 +92,19 @@
     
     <script>
         // Variables globales
-        let teams = ["Équipe 1", "Équipe 2"];
+        let players = ["Joueur 1", "Joueur 2"];
         let scores = {};
         let foundWords = {};
-        let currentTeamIndex = 0;
+        let currentPlayerIndex = 0;
         let round = 1;
         let wordsLeft = [...words];
         let countdown;
         let timeRemaining;
 
         // Initialisation des éléments DOM
-        const addTeamButton = document.getElementById("add-team");
-        const removeTeamButton = document.getElementById("remove-team");
-        const teamConfigDiv = document.getElementById("team-config");
+        const addPlayerButton = document.getElementById("add-player");
+        const removePlayerButton = document.getElementById("remove-player");
+        const playerConfigDiv = document.getElementById("player-config");
         const setupDiv = document.getElementById("setup");
         const gameDiv = document.getElementById("game");
         const summaryDiv = document.getElementById("summary");
@@ -112,7 +112,7 @@
         const startButton = document.getElementById("start");
         const refreshButton = document.getElementById("refresh");
         const durationInput = document.getElementById("duration");
-        const currentTeamElement = document.getElementById("current-team");
+        const currentPlayerElement = document.getElementById("current-player");
         const wordElement = document.getElementById("word");
         const timerElement = document.getElementById("timer");
         const okButton = document.getElementById("ok");
@@ -122,22 +122,22 @@
         const foundWordsDiv = document.getElementById("found-words");
         const finalScoresElement = document.getElementById("final-scores");
 
-        // Ajouter une équipe
-        addTeamButton.addEventListener("click", () => {
-            if (teams.length < 6) {
-                let teamInput = document.createElement("div");
-                teamInput.classList.add("team", "mb-2");
-                teamInput.innerHTML = `<input type="text" class="form-control" value="Équipe ${teams.length + 1}" required>`;
-                teamConfigDiv.appendChild(teamInput);
-                teams.push(`Équipe ${teams.length + 1}`);
+        // Ajouter un joueur
+        addPlayerButton.addEventListener("click", () => {
+            if (players.length < 6) {
+                let playerInput = document.createElement("div");
+                playerInput.classList.add("player", "mb-2");
+                playerInput.innerHTML = `<input type="text" class="form-control" value="Joueur ${players.length + 1}" required>`;
+                playerConfigDiv.appendChild(playerInput);
+                players.push(`Joueur ${players.length + 1}`);
             }
         });
 
-        // Supprimer une équipe
-        removeTeamButton.addEventListener("click", () => {
-            if (teams.length > 2) {
-                teamConfigDiv.lastElementChild.remove();
-                teams.pop();
+        // Supprimer un joueur
+        removePlayerButton.addEventListener("click", () => {
+            if (players.length > 2) {
+                playerConfigDiv.lastElementChild.remove();
+                players.pop();
             }
         });
 
@@ -151,14 +151,14 @@
 
             scores = {};
             foundWords = {};
-            let teamInputs = teamConfigDiv.querySelectorAll(".team input");
-            teams = [];
-            teamInputs.forEach(input => {
-                let teamName = input.value.trim();
-                if (teamName) {
-                    teams.push(teamName);
-                    scores[teamName] = 0;
-                    foundWords[teamName] = [];
+            let playerInputs = playerConfigDiv.querySelectorAll(".player input");
+            players = [];
+            playerInputs.forEach(input => {
+                let playerName = input.value.trim();
+                if (playerName) {
+                    players.push(playerName);
+                    scores[playerName] = 0;
+                    foundWords[playerName] = [];
                 }
             });
 
@@ -171,19 +171,19 @@
         // Commencer un tour
         function startTurn() {
             timeRemaining = parseInt(durationInput.value); // Réinitialiser le temps
-            currentTeamElement.textContent = `Tour de : ${teams[currentTeamIndex]}`;
+            currentPlayerElement.textContent = `Tour de : ${players[currentPlayerIndex]}`;
             showNewWord();
             startTimer();
         }
 
-        // Passer à l'équipe suivante
-        function nextTeam() {
-            currentTeamIndex = (currentTeamIndex + 1) % teams.length; // Passer à l'équipe suivante
-            if (currentTeamIndex === 0) { // Si on revient à la première équipe, la manche est terminée
+        // Passer au joueur suivant
+        function nextPlayer() {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length; // Passer au joueur suivante
+            if (currentPlayerIndex === 0) { // Si on revient au premier joueur, la manche est terminée
                 showSummary();
                 return;
             }
-            if(confirm("Tour terminé ! Passer au tour suivant ?")){
+            if(confirm(`Tour de ${players[currentPlayerIndex - 1]} terminé ! Passer au tour de ${players[currentPlayerIndex]} ?`)){
                 startTurn(); // Commencer le tour suivant
             }
         }
@@ -197,7 +197,7 @@
                 timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
                 if (timeRemaining <= 0) {
                     clearInterval(countdown);
-                    nextTeam();
+                    nextPlayer();
                 }
                 timeRemaining--;
             }, 1000);
@@ -216,8 +216,8 @@
         // Bouton "OK" pour valider un mot
         okButton.addEventListener("click", () => {
             let currentWord = wordElement.innerText;
-            scores[teams[currentTeamIndex]]++;
-            foundWords[teams[currentTeamIndex]].push(currentWord);
+            scores[players[currentPlayerIndex]]++;
+            foundWords[players[currentPlayerIndex]].push(currentWord);
             wordsLeft.splice(wordsLeft.indexOf(currentWord), 1);
             showNewWord();
         });
@@ -234,13 +234,13 @@
             currentScoresElement.innerHTML = "";
             foundWordsDiv.innerHTML = "";
 
-            for (let team in scores) {
+            for (let player in scores) {
                 let scoreLi = document.createElement("li");
-                scoreLi.textContent = `${team} : ${scores[team]} points`;
+                scoreLi.textContent = `${player} : ${scores[player]} points`;
                 currentScoresElement.appendChild(scoreLi);
 
                 let wordsP = document.createElement("p");
-                wordsP.textContent = `${team} a trouvé : ${foundWords[team].join(", ")}`;
+                wordsP.textContent = `${player} a trouvé : ${foundWords[player].join(", ")}`;
                 foundWordsDiv.appendChild(wordsP);
             }
         }
@@ -255,14 +255,14 @@
 
             // Préparer les mots pour la prochaine manche
             wordsLeft = [];
-            for (let team in foundWords) {
-                wordsLeft.push(...foundWords[team]);
+            for (let player in foundWords) {
+                wordsLeft.push(...foundWords[player]);
             }
 
             const setWords = new Set(wordsLeft);
             wordsLeft = [...setWords];
 
-            currentTeamIndex = 0;
+            currentPlayerIndex = 0;
             summaryDiv.classList.add("d-none");
             gameDiv.classList.remove("d-none");
             timeRemaining = parseInt(durationInput.value);
@@ -273,9 +273,9 @@
         function endGame() {
             resultDiv.classList.remove("d-none");
             finalScoresElement.innerHTML = "";
-            for (let team in scores) {
+            for (let player in scores) {
                 let li = document.createElement("li");
-                li.textContent = `${team} : ${scores[team]} points`;
+                li.textContent = `${player} : ${scores[player]} points`;
                 finalScoresElement.appendChild(li);
             }
         }
