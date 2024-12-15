@@ -40,6 +40,18 @@
         <!-- Configuration initiale -->
         <div id="setup" class="text-center">
             <h2 class="mb-4">Configuration du jeu</h2>
+            <div class="mb-3">
+                <h3>Catégorie :</h3>
+                <div>
+                    <select class="form-control mb-2" name="category" id="category">
+                        <option value="words">Toutes catégories</option>
+                        <option value="children">Enfants</option>
+                        <option value="persons">Personnes</option>
+                        <option value="movies">Séries & films</option>
+                        <option value="brands">Marques</option>
+                    </select>
+                </div>
+            </div>
             <div id="player-config" class="mb-3">
                 <h3>Joueurs :</h3>
                 <div class="player mb-2">
@@ -91,16 +103,6 @@
     <script src="words.js"></script>
     
     <script>
-        // Variables globales
-        let players = ["Joueur 1", "Joueur 2"];
-        let scores = {};
-        let foundWords = {};
-        let currentPlayerIndex = 0;
-        let round = 1;
-        let wordsLeft = [...words];
-        let countdown;
-        let timeRemaining;
-
         // Initialisation des éléments DOM
         const addPlayerButton = document.getElementById("add-player");
         const removePlayerButton = document.getElementById("remove-player");
@@ -121,6 +123,38 @@
         const currentScoresElement = document.getElementById("current-scores");
         const foundWordsDiv = document.getElementById("found-words");
         const finalScoresElement = document.getElementById("final-scores");
+        const category = document.getElementById("category");
+
+        // Variables globales
+        let players = ["Joueur 1", "Joueur 2"];
+        let scores = {};
+        let foundWords = {};
+        let currentPlayerIndex = 0;
+        let round = 1;
+        let countdown;
+        let timeRemaining;
+        let wordsLeft = [...words];
+
+        category.addEventListener("change", (e) => {
+            const categorySelected = category.value;
+            switch (categorySelected) {
+                case "persons":
+                    wordsLeft = [...persons];
+                    break;
+                case "movies":
+                    wordsLeft = [...movies];
+                    break;
+                case "children":
+                    wordsLeft = [...children];
+                    break;
+                case "brands":
+                    wordsLeft = [...brands];
+                    break;
+                default:
+                    wordsLeft = [...words];
+                    break;
+            }
+        })
 
         // Ajouter un joueur
         addPlayerButton.addEventListener("click", () => {
