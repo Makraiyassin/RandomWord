@@ -43,7 +43,7 @@
             <div class="mb-3">
                 <h3>Catégorie :</h3>
                 <div>
-                    <select class="form-control mb-2" name="category" id="category">
+                    <select class="form-select mb-2" name="category" id="category">
                         <option value="words">Toutes catégories</option>
                         <option value="children">Enfants</option>
                         <option value="persons">Personnes</option>
@@ -163,7 +163,7 @@
 
         // Ajouter un joueur
         addPlayerButton.addEventListener("click", () => {
-            if (players.length < 6) {
+            if (players.length < 10) {
                 let playerInput = document.createElement("div");
                 playerInput.classList.add("player", "mb-2");
                 playerInput.innerHTML = `<input type="text" class="form-control" value="Joueur ${players.length + 1}" required>`;
