@@ -3000,10 +3000,120 @@ const setBrands = new Set([
     "Chevrolet"
 ]);
 
-const setMixedWord = new Set([...setChildren, ...setMovies, ...setPersons, ...setWords, setBrands]);
+const setAnimaux = new Set([
+    'chat', 'chien', 'cheval', 'vache', 'mouton', 'chèvre', 'cochon', 'lapin', 'poule', 'dinde',
+    'canard', 'oie', 'dindon', 'souris', 'rat', 'hamster', 'cochon d\'Inde', 'gerbille', 'furet', 'chinchilla',
+    'écureuil', 'hérisson', 'taupe', 'castor', 'renard', 'loup', 'ours', 'tigre', 'lion', 'léopard',
+    'guépard', 'éléphant', 'girafe', 'rhinocéros', 'hippopotame', 'zèbre', 'gorille', 'chimpanzé', 'orang-outan', 'gibbon',
+    'babouin', 'mandrill', 'singe', 'koala', 'kangourou', 'wallaby', 'wombat', 'ornithorynque', 'serpent', 'crocodile',
+    'alligator', 'lézard', 'iguane', 'caméléon', 'tortue', 'grenouille', 'crapaud', 'salamandre', 'triton', 'axolotl',
+    'poisson', 'saumon', 'thon', 'carpe', 'truite', 'sardine', 'hareng', 'maquereau', 'sole', 'morue',
+    'requin', 'raie', 'dauphin', 'baleine', 'orque', 'phoque', 'otarie', 'manchot', 'pingouin', 'méduse',
+    'pieuvre', 'calmar', 'crevette', 'homard', 'crabe', 'étoile de mer', 'hippocampe', 'abeille', 'guêpe', 'papillon',
+    'mouche', 'moustique', 'fourmi', 'araignée', 'coccinelle', 'criquet', 'cigale', 'ver de terre', 'chenille', 'libellule'
+  ]);
+
+  const setMetiers = new Set([
+    'enseignant', 'professeur', 'instituteur', 'ingénieur', 'médecin', 'infirmier', 'pharmacien', 'dentiste', 'vétérinaire', 'avocat',
+    'juriste', 'juge', 'policier', 'gendarme', 'pompier', 'cuisinier', 'boulanger', 'pâtissier', 'boucher', 'charcutier',
+    'poissonnier', 'épicier', 'serveur', 'barman', 'réceptionniste', 'coiffeur', 'esthéticienne', 'maquilleur', 'styliste', 'couturier',
+    'journaliste', 'rédacteur', 'traducteur', 'interprète', 'photographe', 'vidéaste', 'cinéaste', 'réalisateur', 'comédien', 'acteur',
+    'actrice', 'musicien', 'chanteur', 'danseur', 'chorégraphe', 'chef d\'orchestre', 'DJ', 'pilote', 'hôtesse de l\'air', 'steward',
+    'chauffeur de taxi', 'chauffeur de bus', 'chauffeur de camion', 'conducteur de train', 'marin', 'capitaine', 'pêcheur', 'agriculteur', 'éleveur', 'jardinier',
+    'paysagiste', 'architecte', 'urbaniste', 'chef de projet', 'manager', 'directeur', 'PDG', 'entrepreneur', 'commerçant', 'vendeur',
+    'acheteur', 'consultant', 'comptable', 'expert-comptable', 'banquier', 'assureur', 'courtier', 'analyste financier', 'cadre', 'ostéopathe',
+    'kinésithérapeute', 'psychologue', 'psychiatre', 'coach', 'formateur', 'conseiller', 'notaire', 'huissier', 'auxiliaire de vie', 'éducateur',
+    'ergothérapeute', 'diététicien', 'nutritionniste', 'opticien', 'orthophoniste', 'orthoptiste', 'géologue', 'astronome', 'biologiste', 'chercheur'
+  ]);
+
+  const setObjets = new Set([
+    'chaise', 'table', 'canapé', 'lit', 'armoire', 'commode', 'étagère', 'bureau', 'fauteuil', 'tabouret',
+    'lampadaire', 'lampe de chevet', 'lustre', 'abat-jour', 'miroir', 'porte', 'fenêtre', 'rideau', 'tapis', 'coussin',
+    'oreiller', 'couverture', 'drap', 'matelas', 'couette', 'édredon', 'table de chevet', 'stylo', 'crayon', 'gomme',
+    'taille-crayon', 'règle', 'ciseaux', 'agrafeuse', 'agrafe', 'trombone', 'colle', 'ruban adhésif', 'élastique', 'papier',
+    'enveloppe', 'timbre', 'carnet', 'cahier', 'classeur', 'chemise', 'dossier', 'surligneur', 'marque-page', 'carte de visite',
+    'imprimante', 'scanner', 'photocopieuse', 'ordinateur', 'ordinateur portable', 'écran', 'clavier', 'souris', 'casque', 'écouteurs',
+    'haut-parleur', 'microphone', 'webcam', 'téléphone fixe', 'smartphone', 'tablette', 'chargeur', 'câble USB', 'adaptateur', 'batterie externe',
+    'clé USB', 'disque dur', 'imprimante multifonction', 'projecteur', 'tableau blanc', 'craie', 'marqueur', 'effaceur', 'porte-documents', 'corbeille',
+    'boîte aux lettres', 'four', 'cuisinière', 'plaque de cuisson', 'micro-ondes', 'réfrigérateur', 'congélateur', 'lave-vaisselle', 'évier', 'robinet',
+    'casserole', 'poêle', 'plat', 'assiette', 'bol', 'verre', 'tasse', 'mug', 'cuillère', 'fourchette'
+  ]);
+
+  const setPays = new Set([
+    'France', 'Allemagne', 'Espagne', 'Italie', 'Royaume-Uni', 'Portugal', 'Belgique', 'Pays-Bas', 'Suisse', 'Autriche',
+    'Grèce', 'Irlande', 'Suède', 'Norvège', 'Finlande', 'Danemark', 'Pologne', 'République tchèque', 'Slovaquie', 'Hongrie',
+    'Roumanie', 'Bulgarie', 'Serbie', 'Croatie', 'Bosnie-Herzégovine', 'Slovénie', 'Macédoine du Nord', 'Albanie', 'Monténégro', 'Kosovo',
+    'Estonie', 'Lettonie', 'Lituanie', 'Biélorussie', 'Ukraine', 'Russie', 'Turquie', 'Géorgie', 'Arménie', 'Azerbaïdjan',
+    'États-Unis', 'Canada', 'Mexique', 'Guatemala', 'Honduras', 'Salvador', 'Nicaragua', 'Costa Rica', 'Panama', 'Cuba',
+    'République dominicaine', 'Haïti', 'Jamaïque', 'Trinité-et-Tobago', 'Bahamas', 'Barbade', 'Brésil', 'Argentine', 'Chili', 'Colombie',
+    'Venezuela', 'Pérou', 'Équateur', 'Bolivie', 'Paraguay', 'Uruguay', 'Guyana', 'Suriname', 'Afrique du Sud', 'Nigeria',
+    'Égypte', 'Kenya', 'Tanzanie', 'Algérie', 'Maroc', 'Tunisie', 'Libye', 'Mauritanie', 'Mali', 'Niger',
+    'Tchad', 'Soudan', 'Éthiopie', 'Somalie', 'Ouganda', 'Rwanda', 'Burundi', 'République démocratique du Congo', 'Angola', 'Mozambique',
+    'Madagascar', 'Zimbabwe', 'Zambie', 'Botswana', 'Namibie', 'Malawi', 'Ghana', 'Côte d\'Ivoire', 'Sénégal', 'Cameroun'
+  ])
+
+  const sePersonnagesFictifs = new Set([
+    // Astérix et Obélix
+    'Astérix', 'Obélix', 'Idéfix', 'Panoramix', 'Ordralfabétix', 'Assurancetourix', 'Cétautomatix', 'Abraracourcix', 'Agecanonix', 'Bonemine',
+    'Goudurix', 'Iélosubmarine', 'Dépétimale', 'Habituérix', 'Pirouette', 'Gluten', 'Grossebaffe', 'Latinus', 'Gracchus', 'Macarix',
+    // Tintin
+    'Tintin', 'Milou', 'Capitaine Haddock', 'Professeur Tournesol', 'Dupond', 'Dupont', 'Bianca Castafiore', 'Nestor', 'Alloingt', 'Sakadion',
+    'Rastapopoulos', 'Général Alcazar', 'Chiquito', 'Bab El Ehr', 'Tom', 'Millie', 'Angel', 'Corvisart', 'Calys', 'Sanders-Hardiman',
+    // Lucky Luke
+    'Lucky Luke', 'Jolly Jumper', 'Billy the Kid', 'Calamity Jane', 'Rantanplan', 'Butch Cassidy', 'Sundance Kid', 'Pat Poker', 'Joe Dalton', 'William Dalton',
+    'Jack Dalton', 'Averell Dalton', 'Calamity Jane', 'Phantom', 'Baron du Glaive', 'Ramsès', 'Le Major Barker', 'Belle Starr', 'Prospector', 'Patty Blue',
+    // Harry Potter
+    'Harry Potter', 'Hermione Granger', 'Ron Weasley', 'Albus Dumbledore', 'Severus Rogue', 'Voldemort', 'Drago Malefoy', 'Hagrid', 'Sirius Black', 'Remus Lupin',
+    'Bellatrix Lestrange', 'Neville Londubat', 'Luna Lovegood', 'Ginny Weasley', 'Molly Weasley', 'Arthur Weasley', 'Dobby', 'Hedwige', 'Minerva McGonagall', 'Cedric Diggory',
+    'Cho Chang', 'Nymphadora Tonks', 'Kingsley Shacklebolt', 'Dolores Ombrage', 'Peter Pettigrew', 'Gilderoy Lockhart', 'Lucius Malefoy', 'Fleur Delacour', 'Rubeus Hagrid', 'Cedric Diggory',
+    // Star Wars
+    'Luke Skywalker', 'Leia Organa', 'Han Solo', 'Darth Vader', 'Yoda', 'Chewbacca', 'Obi-Wan Kenobi', 'R2-D2', 'C-3PO', 'Padmé Amidala',
+    'Anakin Skywalker', 'Rey', 'Finn', 'Poe Dameron', 'Kylo Ren', 'Kylo Ren', 'General Leia', 'Mace Windu', 'Qui-Gon Jinn', 'Boba Fett',
+    'Jango Fett', 'Lando Calrissian', 'Jar Jar Binks', 'Supreme Leader Snoke', 'Count Dooku', 'Asajj Ventress', 'Ahsoka Tano', 'BB-8', 'Captain Phasma', 'Director Krennic',
+    // Disney
+    'Mickey Mouse', 'Donald Duck', 'Minnie Mouse', 'Daisy Duck', 'Goofy', 'Pluto', 'Blanche-Neige', 'Cendrillon', 'Aurora', 'Ariel',
+    'Belle', 'Jasmine', 'Pocahontas', 'Mulan', 'Tiana', 'Rapunzel', 'Merida', 'Elsa', 'Anna', 'Moana',
+    'Aladdin', 'Jafar', 'Ursula', 'Maléfique', 'Cruella', 'Gaston', 'Capitaine Crochet', 'Peter Pan', 'Winnie l’Ourson', 'Tigrou',
+    // Marvel
+    'Iron Man', 'Tony Stark', 'Captain America', 'Steve Rogers', 'Thor', 'Hulk', 'Bruce Banner', 'Black Widow', 'Natasha Romanoff', 'Hawkeye',
+    'Clint Barton', 'Spider-Man', 'Peter Parker', 'Doctor Strange', 'Stephen Strange', 'Black Panther', 'T’Challa', 'Scarlet Witch', 'Wanda Maximoff', 'Vision',
+    'Ant-Man', 'Scott Lang', 'Wasp', 'Hope van Dyne', 'Guardians of the Galaxy', 'Star-Lord', 'Gamora', 'Drax', 'Rocket', 'Groot',
+    // DC
+    'Superman', 'Clark Kent', 'Lois Lane', 'Batman', 'Bruce Wayne', 'Robin', 'Joker', 'Harley Quinn', 'Wonder Woman', 'Diana Prince',
+    'Aquaman', 'Arthur Curry', 'Green Lantern', 'Hal Jordan', 'The Flash', 'Barry Allen', 'Lex Luthor', 'Catwoman', 'Penguin', 'Riddler',
+    // Le Seigneur des anneaux
+    'Frodon Sacquet', 'Sam Gamegie', 'Gandalf', 'Aragorn', 'Legolas', 'Gimli', 'Boromir', 'Merry', 'Pippin', 'Saroumane',
+    'Sauron', 'Galadriel', 'Elrond', 'Bilbon Sacquet', 'Gollum', 'Théoden', 'Eowyn', 'Faramir', 'Treebeard', 'Denethor',
+    // Sherlock Holmes
+    'Sherlock Holmes', 'Dr. Watson', 'Professeur Moriarty', 'Irene Adler', 'Inspector Lestrade', 'Mrs Hudson', 'Mycroft Holmes', 'Sebastian Moran', 'Mary Morstan', 'Inspector Gregson',
+    // Game of Thrones
+    'Jon Snow', 'Daenerys Targaryen', 'Tyrion Lannister', 'Cersei Lannister', 'Jaime Lannister', 'Arya Stark', 'Sansa Stark', 'Bran Stark', 'Ned Stark', 'Robert Baratheon',
+    'Joffrey Baratheon', 'Stannis Baratheon', 'Melisandre', 'Brienne de Torth', 'Sandor Clegane', 'Gregor Clegane', 'Petyr Baelish', 'Varys', 'Gendry', 'Samwell Tarly',
+    // Manga / Anime
+    'Naruto', 'Sasuke', 'Sakura Haruno', 'Kakashi Hatake', 'Luffy', 'Zoro', 'Nami', 'Usopp', 'Sanji', 'Chopper',
+    'Goku', 'Vegeta', 'Chi-Chi', 'Bulma', 'Piccolo', 'Krillin', 'Sailor Moon', 'Usagi Tsukino', 'Mamoru Chiba', 'Inuyasha',
+    // Jeux vidéo
+    'Mario', 'Luigi', 'Princess Peach', 'Bowser', 'Link', 'Zelda', 'Ganondorf', 'Samus Aran', 'Pikachu', 'Mewtwo',
+    'Solid Snake', 'Master Chief', 'Lara Croft', 'Kratos', 'Ellie', 'Joel', 'Geralt de Riv', 'Cloud Strife', 'Sephiroth', 'Atmosphere',
+    // Mythologie
+    'Zeus', 'Héra', 'Poséidon', 'Hadès', 'Athéna', 'Apollon', 'Artémis', 'Arès', 'Dionysos', 'Héphaïstos',
+    'Odin', 'Thor', 'Loki', 'Freya', 'Tyr', 'Heimdall', 'Frigg', 'Baldr', 'Njörd', 'Skadi',
+    // Séries TV cultes
+    'Walter White', 'Jesse Pinkman', 'Tyrion Lannister', 'Rick Grimes', 'Sherlock (BBC)', 'Doctor Who', 'Eleven', 'Tony Soprano', 'Don Draper', 'Buffy Summers',
+    // Roman classique
+    'Don Quichotte', 'Sancho Panza', 'Madame Bovary', 'Phèdre', 'Raskolnikov', 'Anna Karénine', 'Heathcliff', 'Catherine Earnshaw', 'Emma Bovary', 'Julien Sorel',
+    // Ajouts divers pour atteindre 500
+  ]);
+
+const setMixedWord = new Set([...setChildren, ...setMovies, ...setPersons, ...setWords, setBrands, ...setAnimaux, ...setMetiers, ...setObjets, ...setPays, ...sePersonnagesFictifs]);
 
 const persons = [...setPersons];
 const movies = [...setMovies];
 const children = [...setChildren];
 const brands = [...setBrands];
 const words = [...setMixedWord];
+const animaux = [...setAnimaux];
+const objets = [...setObjets];
+const metiers = [...setMetiers];
+const pays = [...setPays];
+const personnagesFictifs = [...sePersonnagesFictifs];

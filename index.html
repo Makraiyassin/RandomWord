@@ -32,11 +32,30 @@
             font-size: 1.2rem;
             margin: 10px 0;
         }
+
+        /* Style pour la superposition */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #overlay img {
+            max-width: 100%;
+            max-height: 100%;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container py-5">
+    <div id="main" class="container py-5">
         <!-- Configuration initiale -->
         <div id="setup" class="text-center">
             <h2 class="mb-4">Configuration du jeu</h2>
@@ -49,6 +68,11 @@
                         <option value="persons">Personnes</option>
                         <option value="movies">Séries & films</option>
                         <option value="brands">Marques</option>
+                        <option value="pays">Pays</option>
+                        <option value="objets">Objets</option>
+                        <option value="metiers">Metiers</option>
+                        <option value="animaux">Animaux</option>
+                        <option value="personnagesFictifs">Personnages fictifs</option>
                     </select>
                 </div>
             </div>
@@ -79,7 +103,7 @@
             <h1 id="word" class="display-3 fw-bold">***************</h1>
             <div class="text-danger my-3 d-flex justify-content-center align-items-center">
                 <p id="timer">00:00</p>
-                <button id="pauseButton" class="btn btn-primary h-50">⏸</button>
+                <button id="pauseButton" class="btn btn-primary h-50">⏯︎</button>
                 <button id="resumeButton" class="btn btn-primary h-50" style="display: none;">▶</button>
             </div>
             <div>
@@ -103,9 +127,13 @@
             <button class="btn btn-primary btn-lg" id="refresh">Réinitialiser</button>
         </div>
     </div>
+    <div id="overlay" style="display: none;">
+        <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExY3BidGd2bmswam1xOW9yM2RiZzRhcXV4djI4Zng1NHg2M3dydzZnaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TgsitamD7jCF0gDevs/giphy.gif"
+            alt="">
+    </div>
 
     <script src="words.js"></script>
-    
+
     <script>
         // Initialisation des éléments DOM
         const addPlayerButton = document.getElementById("add-player");
@@ -128,6 +156,7 @@
         const foundWordsDiv = document.getElementById("found-words");
         const finalScoresElement = document.getElementById("final-scores");
         const category = document.getElementById("category");
+        const overlay = document.getElementById('overlay');
 
         // Variables globales
         let players = ["Joueur 1", "Joueur 2"];
@@ -139,6 +168,8 @@
         let timeRemaining;
         let wordsLeft = [...words];
         let isPaused = false; // État du minuteur (actif ou en pause)
+        let pauseCounter = 0;
+        let jockCounter = 0;
 
         category.addEventListener("change", (e) => {
             const categorySelected = category.value;
@@ -154,6 +185,21 @@
                     break;
                 case "brands":
                     wordsLeft = [...brands];
+                    break;
+                case "animaux":
+                    wordsLeft = [...animaux];
+                    break;
+                case "pays":
+                    wordsLeft = [...pays];
+                    break;
+                case "metiers":
+                    wordsLeft = [...metiers];
+                    break;
+                case "objets":
+                    wordsLeft = [...objets];
+                    break;
+                case "personnagesFictifs":
+                    wordsLeft = [...personnagesFictifs];
                     break;
                 default:
                     wordsLeft = [...words];
@@ -209,7 +255,7 @@
 
         document.getElementById("pauseButton").addEventListener("click", pauseTimer);
         document.getElementById("resumeButton").addEventListener("click", resumeTimer);
-        
+
         // Commencer un tour
         function startTurn() {
             timeRemaining = parseInt(durationInput.value); // Réinitialiser le temps
@@ -268,6 +314,7 @@
         // Fonction pour mettre le minuteur en pause
         function pauseTimer() {
             isPaused = true;
+            handlePauseCounter();
             document.getElementById("pauseButton").style.display = "none"
             document.getElementById("resumeButton").style.display = "block"
         }
@@ -289,7 +336,10 @@
         });
 
         // Bouton "Passer" pour passer au mot suivant
-        passButton.addEventListener("click", showNewWord);
+        passButton.addEventListener("click",()=>{
+            handleJockCounter();
+            showNewWord();
+        });
 
         // Afficher le récapitulatif de la manche
         function showSummary() {
@@ -348,6 +398,26 @@
 
         // Réinitialisation du jeu
         refreshButton.addEventListener("click", () => location.reload());
+
+        //fonctions innutiles
+        function handlePauseCounter() {
+            pauseCounter++
+            if (pauseCounter == 5) {
+                alert("VOUS VOULEZ BIEN ARRÊTER DE METTRE 'PAUSE' SVP!!!")
+                pauseCounter = 0;
+            }
+        }
+        function handleJockCounter() {
+            jockCounter++
+            if (jockCounter == 10) {
+                pauseTimer()
+                overlay.style.display = "block"
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 5000); 
+                jockCounter = 0;
+            }
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
