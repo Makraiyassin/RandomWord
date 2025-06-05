@@ -165,7 +165,7 @@
         let round = 1;
         let countdown;
         let timeRemaining;
-        let wordsLeft = [...words];
+        let wordsLeft = [];
         let isPaused = false; // État du minuteur (actif ou en pause)
         let pauseCounter = 0;
         let jockCounter = 0;
@@ -265,6 +265,8 @@
 
         // Passer au joueur suivant
         function nextPlayer() {
+            jockCounter = 0;
+            pauseCounter = 0;
             currentPlayerIndex = (currentPlayerIndex + 1) % players.length; // Passer au joueur suivante
             let isConfirmed = false;
 
@@ -375,7 +377,13 @@
             }
 
             const setWords = new Set(wordsLeft);
-            wordsLeft = [...setWords];
+
+            if(setWords.size < 30){
+                round--;
+                wordsLeft = words.filter(item => !setWords.has(item));
+            }else{
+                wordsLeft = [...setWords];
+            }
 
             currentPlayerIndex = 0;
             summaryDiv.classList.add("d-none");
@@ -407,6 +415,7 @@
             }
         }
         function handleJockCounter() {
+            pauseCounter--
             jockCounter++
             if (jockCounter == 10) {
                 pauseTimer()
