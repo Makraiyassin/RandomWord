@@ -386,7 +386,7 @@
             const setWords = new Set(wordsLeft);
 
             if(setWords.size > 0 && setWords.size < 30){
-                if(confirm(`Vous avez ${setWords.size} mots.\n Voulez vous passer à la manche suivantes ou recommencer une "première" manche afin d'accumuler plus de mots?`)){
+                if(round == 2 && confirm(`Vous avez ${setWords.size} mots.\n Voulez vous passer à la manche suivantes ou recommencer une "première" manche afin d'accumuler plus de mots?`)){
                     round--;
                     wordsLeft = words.filter(item => !setWords.has(item));
                 } else {
