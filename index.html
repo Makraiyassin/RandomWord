@@ -165,7 +165,7 @@
         let round = 1;
         let countdown;
         let timeRemaining;
-        let wordsLeft = [];
+        let wordsLeft = [...words];
         let isPaused = false; // État du minuteur (actif ou en pause)
         let pauseCounter = 0;
         let jockCounter = 0;
@@ -378,7 +378,7 @@
 
             const setWords = new Set(wordsLeft);
 
-            if(setWords.size < 30){
+            if(setWords.size > 0 && setWords.size < 30){
                 round--;
                 wordsLeft = words.filter(item => !setWords.has(item));
             }else{
