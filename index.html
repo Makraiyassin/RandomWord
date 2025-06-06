@@ -368,6 +368,10 @@
         // Passer à la manche suivante
         nextRoundButton.addEventListener("click", () => {
             round++;
+            if(round == 4 && !confirm("Voulez-vous une quatrième manche?")){
+                endGame();
+                return;
+            }
             if (round > 4) {
                 endGame();
                 return;
