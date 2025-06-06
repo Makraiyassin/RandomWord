@@ -98,6 +98,7 @@
 
         <!-- Jeu -->
         <div id="game" class="d-none text-center">
+            <h1 id="current-round" class="mb-4"></h1>
             <h1 id="current-player" class="mb-4"></h1>
             <h1 id="word" class="display-3 fw-bold">***************</h1>
             <div class="text-danger my-3 d-flex justify-content-center align-items-center">
@@ -145,6 +146,7 @@
         const startButton = document.getElementById("start");
         const refreshButton = document.getElementById("refresh");
         const durationInput = document.getElementById("duration");
+        const currentRoundElement = document.getElementById("current-round");
         const currentPlayerElement = document.getElementById("current-player");
         const wordElement = document.getElementById("word");
         const timerElement = document.getElementById("timer");
@@ -258,6 +260,7 @@
         // Commencer un tour
         function startTurn() {
             timeRemaining = parseInt(durationInput.value); // Réinitialiser le temps
+            currentRoundElement.textContent = `Manche ${round}\n`;
             currentPlayerElement.textContent = `Tour de : ${players[currentPlayerIndex]}`;
             showNewWord();
             startTimer();
@@ -379,8 +382,12 @@
             const setWords = new Set(wordsLeft);
 
             if(setWords.size > 0 && setWords.size < 30){
-                round--;
-                wordsLeft = words.filter(item => !setWords.has(item));
+                if(confirm(`Vous avez ${setWords.size} mots.\n Voulez vous passer à la manche suivantes ou recommencer une "première" manche afin d'accumuler plus de mots?`)){
+                    round--;
+                    wordsLeft = words.filter(item => !setWords.has(item));
+                } else {
+                    wordsLeft = [...setWords];
+                }
             }else{
                 wordsLeft = [...setWords];
             }
