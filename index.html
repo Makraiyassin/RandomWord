@@ -242,6 +242,7 @@
 
         // Démarrer le jeu
         startButton.addEventListener("click", () => {
+            timeOfRound = parseInt(durationInput.value);
             timeRemaining = parseInt(durationInput.value);
             if (isNaN(timeRemaining) || timeRemaining <= 0) {
                 alert("Veuillez entrer un temps par tour valide.");
@@ -331,8 +332,8 @@
         // Commencer un tour
         function startTurn() {
             saveGameState();
-            if (timeRemaining === undefined || isNaN(timeRemaining)) {
-                timeRemaining = parseInt(durationInput.value); // Réinitialiser le temps
+            if(!timeRemaining){
+                timeRemaining = timeOfRound; // Réinitialiser le temps
             }
             currentRoundElement.textContent = `Manche ${round}\n`;
             currentPlayerElement.textContent = `Tour de : ${players[currentPlayerIndex]}`;
@@ -358,6 +359,7 @@
                     startTurn(); // Commencer le tour suivant
                 }
             }
+            saveGameState();
         }
 
         // Minuteur
@@ -376,6 +378,7 @@
                     }
                     timeRemaining--;
                 }
+                saveGameState();
             }, 1000);
         }
 
@@ -465,6 +468,7 @@
                 foundWords,
                 currentPlayerIndex,
                 round,
+                timeOfRound,
                 timeRemaining,
                 wordsLeft,
                 category: category.value
@@ -479,6 +483,7 @@
             foundWords = state.foundWords;
             currentPlayerIndex = state.currentPlayerIndex;
             round = state.round;
+            timeOfRound = state.timeOfRound;
             timeRemaining = state.timeRemaining;
             wordsLeft = state.wordsLeft;
             category.value = state.category;
