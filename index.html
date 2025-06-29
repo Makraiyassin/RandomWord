@@ -172,6 +172,19 @@
         let pauseCounter = 0;
         let jockCounter = 0;
 
+        //Chargement partie précédente si existe
+        window.addEventListener("load", () => {
+            const savedState = localStorage.getItem("gameState");
+            if (savedState) {
+                const shouldRestore = confirm("Une partie précédente a été détectée. Voulez-vous la reprendre ?");
+                if (shouldRestore) {
+                    restoreGameState(JSON.parse(savedState));
+                } else {
+                    localStorage.removeItem("gameState");
+                }
+            }
+        });
+
         category.addEventListener("change", (e) => {
             const categorySelected = category.value;
             switch (categorySelected) {
@@ -229,6 +242,7 @@
 
         // Démarrer le jeu
         startButton.addEventListener("click", () => {
+            timeOfRound = parseInt(durationInput.value);
             timeRemaining = parseInt(durationInput.value);
             if (isNaN(timeRemaining) || timeRemaining <= 0) {
                 alert("Veuillez entrer un temps par tour valide.");
@@ -253,117 +267,6 @@
 
             startTurn();
         });
-
-        document.getElementById("pauseButton").addEventListener("click", pauseTimer);
-        document.getElementById("resumeButton").addEventListener("click", resumeTimer);
-
-        // Commencer un tour
-        function startTurn() {
-            timeRemaining = parseInt(durationInput.value); // Réinitialiser le temps
-            currentRoundElement.textContent = `Manche ${round}\n`;
-            currentPlayerElement.textContent = `Tour de : ${players[currentPlayerIndex]}`;
-            showNewWord();
-            startTimer();
-        }
-
-        // Passer au joueur suivant
-        function nextPlayer() {
-            jockCounter = 0;
-            pauseCounter = 0;
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.length; // Passer au joueur suivante
-            let isConfirmed = false;
-
-            if (currentPlayerIndex === 0) { // Si on revient au premier joueur, la manche est terminée
-                showSummary();
-                return;
-            } else {
-                while (!isConfirmed) {
-                    isConfirmed = confirm(`Tour de ${players[currentPlayerIndex - 1]} terminé ! Passer au tour de ${players[currentPlayerIndex]} ?`);
-                }
-                if (isConfirmed) {
-                    startTurn(); // Commencer le tour suivant
-                }
-            }
-        }
-
-        // Minuteur
-        function startTimer() {
-            clearInterval(countdown);
-            isPaused = false; // Réinitialise l'état en actif
-
-            countdown = setInterval(() => {
-                if (!isPaused) {
-                    let minutes = Math.floor(timeRemaining / 60);
-                    let seconds = timeRemaining % 60;
-                    timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                    if (timeRemaining <= 0) {
-                        clearInterval(countdown);
-                        nextPlayer();
-                    }
-                    timeRemaining--;
-                }
-            }, 1000);
-        }
-
-        // Afficher un nouveau mot
-        function showNewWord() {
-            if (wordsLeft.length === 0) {
-                showSummary();
-                return;
-            }
-            let randomIndex = Math.floor(Math.random() * wordsLeft.length);
-            wordElement.innerText = wordsLeft[randomIndex];
-        }
-
-        // Fonction pour mettre le minuteur en pause
-        function pauseTimer() {
-            isPaused = true;
-            handlePauseCounter();
-            document.getElementById("pauseButton").style.display = "none"
-            document.getElementById("resumeButton").style.display = "block"
-        }
-
-        // Fonction pour reprendre le minuteur
-        function resumeTimer() {
-            isPaused = false;
-            document.getElementById("pauseButton").style.display = "block"
-            document.getElementById("resumeButton").style.display = "none"
-        }
-
-        // Bouton "OK" pour valider un mot
-        okButton.addEventListener("click", () => {
-            let currentWord = wordElement.innerText;
-            scores[players[currentPlayerIndex]]++;
-            foundWords[players[currentPlayerIndex]].push(currentWord);
-            wordsLeft.splice(wordsLeft.indexOf(currentWord), 1);
-            showNewWord();
-        });
-
-        // Bouton "Passer" pour passer au mot suivant
-        passButton.addEventListener("click",()=>{
-            handleJockCounter();
-            showNewWord();
-        });
-
-        // Afficher le récapitulatif de la manche
-        function showSummary() {
-            clearInterval(countdown);
-            gameDiv.classList.add("d-none");
-            summaryDiv.classList.remove("d-none");
-
-            currentScoresElement.innerHTML = "";
-            foundWordsDiv.innerHTML = "";
-
-            for (let player in scores) {
-                let scoreLi = document.createElement("li");
-                scoreLi.textContent = `${player} : ${scores[player]} points`;
-                currentScoresElement.appendChild(scoreLi);
-
-                let wordsP = document.createElement("p");
-                wordsP.textContent = `${player} a trouvé : ${foundWords[player].join(", ")}`;
-                foundWordsDiv.appendChild(wordsP);
-            }
-        }
 
         // Passer à la manche suivante
         nextRoundButton.addEventListener("click", () => {
@@ -403,6 +306,127 @@
             startTurn();
         });
 
+        // Bouton "OK" pour valider un mot
+        okButton.addEventListener("click", () => {
+            let currentWord = wordElement.innerText;
+            scores[players[currentPlayerIndex]]++;
+            foundWords[players[currentPlayerIndex]].push(currentWord);
+            wordsLeft.splice(wordsLeft.indexOf(currentWord), 1);
+            showNewWord();
+            saveGameState();
+        });
+
+        // Bouton "Passer" pour passer au mot suivant
+        passButton.addEventListener("click",()=>{
+            handleJockCounter();
+            showNewWord();
+            saveGameState();
+        });
+
+        // Réinitialisation du jeu
+        refreshButton.addEventListener("click", () => location.reload());       
+
+        document.getElementById("pauseButton").addEventListener("click", pauseTimer);
+        document.getElementById("resumeButton").addEventListener("click", resumeTimer);
+
+        // Commencer un tour
+        function startTurn() {
+            saveGameState();
+            if(!timeRemaining){
+                timeRemaining = timeOfRound; // Réinitialiser le temps
+            }
+            currentRoundElement.textContent = `Manche ${round}\n`;
+            currentPlayerElement.textContent = `Tour de : ${players[currentPlayerIndex]}`;
+            showNewWord();
+            startTimer();
+        }
+
+        // Passer au joueur suivant
+        function nextPlayer() {
+            jockCounter = 0;
+            pauseCounter = 0;
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length; // Passer au joueur suivante
+            let isConfirmed = false;
+
+            if (currentPlayerIndex === 0) { // Si on revient au premier joueur, la manche est terminée
+                showSummary();
+                return;
+            } else {
+                while (!isConfirmed) {
+                    isConfirmed = confirm(`Tour de ${players[currentPlayerIndex - 1]} terminé ! Passer au tour de ${players[currentPlayerIndex]} ?`);
+                }
+                if (isConfirmed) {
+                    startTurn(); // Commencer le tour suivant
+                }
+            }
+            saveGameState();
+        }
+
+        // Minuteur
+        function startTimer() {
+            clearInterval(countdown);
+            isPaused = false; // Réinitialise l'état en actif
+
+            countdown = setInterval(() => {
+                if (!isPaused) {
+                    let minutes = Math.floor(timeRemaining / 60);
+                    let seconds = timeRemaining % 60;
+                    timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                    if (timeRemaining <= 0) {
+                        clearInterval(countdown);
+                        nextPlayer();
+                    }
+                    timeRemaining--;
+                }
+                saveGameState();
+            }, 1000);
+        }
+
+        // Afficher un nouveau mot
+        function showNewWord() {
+            if (wordsLeft.length === 0) {
+                showSummary();
+                return;
+            }
+            let randomIndex = Math.floor(Math.random() * wordsLeft.length);
+            wordElement.innerText = wordsLeft[randomIndex];
+        }
+
+        // Fonction pour mettre le minuteur en pause
+        function pauseTimer() {
+            isPaused = true;
+            handlePauseCounter();
+            document.getElementById("pauseButton").style.display = "none"
+            document.getElementById("resumeButton").style.display = "block"
+        }
+
+        // Fonction pour reprendre le minuteur
+        function resumeTimer() {
+            isPaused = false;
+            document.getElementById("pauseButton").style.display = "block"
+            document.getElementById("resumeButton").style.display = "none"
+        }
+
+        // Afficher le récapitulatif de la manche
+        function showSummary() {
+            clearInterval(countdown);
+            gameDiv.classList.add("d-none");
+            summaryDiv.classList.remove("d-none");
+
+            currentScoresElement.innerHTML = "";
+            foundWordsDiv.innerHTML = "";
+
+            for (let player in scores) {
+                let scoreLi = document.createElement("li");
+                scoreLi.textContent = `${player} : ${scores[player]} points`;
+                currentScoresElement.appendChild(scoreLi);
+
+                let wordsP = document.createElement("p");
+                wordsP.textContent = `${player} a trouvé : ${foundWords[player].join(", ")}`;
+                foundWordsDiv.appendChild(wordsP);
+            }
+        } 
+        
         // Fin du jeu
         function endGame() {
             resultDiv.classList.remove("d-none");
@@ -412,10 +436,8 @@
                 li.textContent = `${player} : ${scores[player]} points`;
                 finalScoresElement.appendChild(li);
             }
+            localStorage.removeItem("gameState");
         }
-
-        // Réinitialisation du jeu
-        refreshButton.addEventListener("click", () => location.reload());
 
         //fonctions innutiles
         function handlePauseCounter() {
@@ -425,6 +447,7 @@
                 pauseCounter = 0;
             }
         }
+        
         function handleJockCounter() {
             pauseCounter--
             jockCounter++
@@ -437,6 +460,39 @@
                 jockCounter = 0;
             }
         }
+
+        function saveGameState() {
+            const state = {
+                players,
+                scores,
+                foundWords,
+                currentPlayerIndex,
+                round,
+                timeOfRound,
+                timeRemaining,
+                wordsLeft,
+                category: category.value
+            };
+            localStorage.setItem("gameState", JSON.stringify(state));
+        }
+
+        function restoreGameState(state) {
+            console.log(state)
+            players = state.players;
+            scores = state.scores;
+            foundWords = state.foundWords;
+            currentPlayerIndex = state.currentPlayerIndex;
+            round = state.round;
+            timeOfRound = state.timeOfRound;
+            timeRemaining = state.timeRemaining;
+            wordsLeft = state.wordsLeft;
+            category.value = state.category;
+
+            setupDiv.classList.add("d-none");
+            gameDiv.classList.remove("d-none");
+            startTurn();
+        }
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
