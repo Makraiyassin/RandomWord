@@ -172,6 +172,19 @@
         let pauseCounter = 0;
         let jockCounter = 0;
 
+        //Chargement partie précédente si existe
+        window.addEventListener("load", () => {
+            const savedState = localStorage.getItem("gameState");
+            if (savedState) {
+                const shouldRestore = confirm("Une partie précédente a été détectée. Voulez-vous la reprendre ?");
+                if (shouldRestore) {
+                    restoreGameState(JSON.parse(savedState));
+                } else {
+                    localStorage.removeItem("gameState");
+                }
+            }
+        });
+
         category.addEventListener("change", (e) => {
             const categorySelected = category.value;
             switch (categorySelected) {
@@ -254,12 +267,73 @@
             startTurn();
         });
 
+        // Passer à la manche suivante
+        nextRoundButton.addEventListener("click", () => {
+            round++;
+            if(round == 4 && !confirm("Voulez-vous une quatrième manche?")){
+                endGame();
+                return;
+            }
+            if (round > 4) {
+                endGame();
+                return;
+            }
+
+            // Préparer les mots pour la prochaine manche
+            wordsLeft = [];
+            for (let player in foundWords) {
+                wordsLeft.push(...foundWords[player]);
+            }
+
+            const setWords = new Set(wordsLeft);
+
+            if(setWords.size > 0 && setWords.size < 30){
+                if(round == 2 && confirm(`Vous avez ${setWords.size} mots.\n Voulez vous passer à la manche suivantes ou recommencer une "première" manche afin d'accumuler plus de mots?`)){
+                    round--;
+                    wordsLeft = words.filter(item => !setWords.has(item));
+                } else {
+                    wordsLeft = [...setWords];
+                }
+            }else{
+                wordsLeft = [...setWords];
+            }
+
+            currentPlayerIndex = 0;
+            summaryDiv.classList.add("d-none");
+            gameDiv.classList.remove("d-none");
+            timeRemaining = parseInt(durationInput.value);
+            startTurn();
+        });
+
+        // Bouton "OK" pour valider un mot
+        okButton.addEventListener("click", () => {
+            let currentWord = wordElement.innerText;
+            scores[players[currentPlayerIndex]]++;
+            foundWords[players[currentPlayerIndex]].push(currentWord);
+            wordsLeft.splice(wordsLeft.indexOf(currentWord), 1);
+            showNewWord();
+            saveGameState();
+        });
+
+        // Bouton "Passer" pour passer au mot suivant
+        passButton.addEventListener("click",()=>{
+            handleJockCounter();
+            showNewWord();
+            saveGameState();
+        });
+
+        // Réinitialisation du jeu
+        refreshButton.addEventListener("click", () => location.reload());       
+
         document.getElementById("pauseButton").addEventListener("click", pauseTimer);
         document.getElementById("resumeButton").addEventListener("click", resumeTimer);
 
         // Commencer un tour
         function startTurn() {
-            timeRemaining = parseInt(durationInput.value); // Réinitialiser le temps
+            saveGameState();
+            if (timeRemaining === undefined || isNaN(timeRemaining)) {
+                timeRemaining = parseInt(durationInput.value); // Réinitialiser le temps
+            }
             currentRoundElement.textContent = `Manche ${round}\n`;
             currentPlayerElement.textContent = `Tour de : ${players[currentPlayerIndex]}`;
             showNewWord();
@@ -330,21 +404,6 @@
             document.getElementById("resumeButton").style.display = "none"
         }
 
-        // Bouton "OK" pour valider un mot
-        okButton.addEventListener("click", () => {
-            let currentWord = wordElement.innerText;
-            scores[players[currentPlayerIndex]]++;
-            foundWords[players[currentPlayerIndex]].push(currentWord);
-            wordsLeft.splice(wordsLeft.indexOf(currentWord), 1);
-            showNewWord();
-        });
-
-        // Bouton "Passer" pour passer au mot suivant
-        passButton.addEventListener("click",()=>{
-            handleJockCounter();
-            showNewWord();
-        });
-
         // Afficher le récapitulatif de la manche
         function showSummary() {
             clearInterval(countdown);
@@ -363,46 +422,8 @@
                 wordsP.textContent = `${player} a trouvé : ${foundWords[player].join(", ")}`;
                 foundWordsDiv.appendChild(wordsP);
             }
-        }
-
-        // Passer à la manche suivante
-        nextRoundButton.addEventListener("click", () => {
-            round++;
-            if(round == 4 && !confirm("Voulez-vous une quatrième manche?")){
-                endGame();
-                return;
-            }
-            if (round > 4) {
-                endGame();
-                return;
-            }
-
-            // Préparer les mots pour la prochaine manche
-            wordsLeft = [];
-            for (let player in foundWords) {
-                wordsLeft.push(...foundWords[player]);
-            }
-
-            const setWords = new Set(wordsLeft);
-
-            if(setWords.size > 0 && setWords.size < 30){
-                if(round == 2 && confirm(`Vous avez ${setWords.size} mots.\n Voulez vous passer à la manche suivantes ou recommencer une "première" manche afin d'accumuler plus de mots?`)){
-                    round--;
-                    wordsLeft = words.filter(item => !setWords.has(item));
-                } else {
-                    wordsLeft = [...setWords];
-                }
-            }else{
-                wordsLeft = [...setWords];
-            }
-
-            currentPlayerIndex = 0;
-            summaryDiv.classList.add("d-none");
-            gameDiv.classList.remove("d-none");
-            timeRemaining = parseInt(durationInput.value);
-            startTurn();
-        });
-
+        } 
+        
         // Fin du jeu
         function endGame() {
             resultDiv.classList.remove("d-none");
@@ -412,10 +433,8 @@
                 li.textContent = `${player} : ${scores[player]} points`;
                 finalScoresElement.appendChild(li);
             }
+            localStorage.removeItem("gameState");
         }
-
-        // Réinitialisation du jeu
-        refreshButton.addEventListener("click", () => location.reload());
 
         //fonctions innutiles
         function handlePauseCounter() {
@@ -425,6 +444,7 @@
                 pauseCounter = 0;
             }
         }
+        
         function handleJockCounter() {
             pauseCounter--
             jockCounter++
@@ -437,6 +457,37 @@
                 jockCounter = 0;
             }
         }
+
+        function saveGameState() {
+            const state = {
+                players,
+                scores,
+                foundWords,
+                currentPlayerIndex,
+                round,
+                timeRemaining,
+                wordsLeft,
+                category: category.value
+            };
+            localStorage.setItem("gameState", JSON.stringify(state));
+        }
+
+        function restoreGameState(state) {
+            console.log(state)
+            players = state.players;
+            scores = state.scores;
+            foundWords = state.foundWords;
+            currentPlayerIndex = state.currentPlayerIndex;
+            round = state.round;
+            timeRemaining = state.timeRemaining;
+            wordsLeft = state.wordsLeft;
+            category.value = state.category;
+
+            setupDiv.classList.add("d-none");
+            gameDiv.classList.remove("d-none");
+            startTurn();
+        }
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
