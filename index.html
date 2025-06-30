@@ -72,6 +72,7 @@
                         <option value="metiers">Metiers</option>
                         <option value="animaux">Animaux</option>
                         <option value="personnagesFictifs">Personnages fictifs</option>
+                        <option value="islam">islam</option>
                     </select>
                 </div>
             </div>
@@ -215,10 +216,14 @@
                 case "personnagesFictifs":
                     wordsLeft = [...personnagesFictifs];
                     break;
+                case "islam":
+                    wordsLeft = [...islam];
+                    break;
                 default:
                     wordsLeft = [...words];
                     break;
             }
+            console.log(wordsLeft)
         })
 
         // Ajouter un joueur
