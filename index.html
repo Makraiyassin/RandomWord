@@ -169,6 +169,7 @@
         let countdown;
         let timeRemaining;
         let wordsLeft = [...words];
+        let allWordsLeft = [...wordsLeft];
         let isPaused = false; // État du minuteur (actif ou en pause)
         let pauseCounter = 0;
         let jockCounter = 0;
@@ -223,6 +224,7 @@
                     wordsLeft = [...words];
                     break;
             }
+            allWordsLeft = [ ...wordsLeft];
             console.log(wordsLeft)
         })
 
@@ -294,9 +296,9 @@
             const setWords = new Set(wordsLeft);
 
             if(setWords.size > 0 && setWords.size < 30){
-                if(round == 2 && confirm(`Vous avez ${setWords.size} mots.\n Voulez vous passer à la manche suivantes ou recommencer une "première" manche afin d'accumuler plus de mots?`)){
+                if(round == 2 && confirm(`Vous avez ${setWords.size} mots.\n Voulez vous recommencer une "première" manche afin d'accumuler plus de mots?`)){
                     round--;
-                    wordsLeft = words.filter(item => !setWords.has(item));
+                    wordsLeft = allWordsLeft.filter(item =>!setWords.has(item));
                 } else {
                     wordsLeft = [...setWords];
                 }
