@@ -458,12 +458,12 @@
         function handleJockCounter() {
             pauseCounter--
             jockCounter++
-            if (jockCounter == 10) {
+            if (jockCounter == 15) {
                 pauseTimer()
                 overlay.style.display = "block"
                 setTimeout(() => {
                     overlay.style.display = 'none';
-                }, 5000); 
+                }, 3000); 
                 jockCounter = 0;
             }
         }
