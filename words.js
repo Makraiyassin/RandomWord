@@ -456,7 +456,11 @@ const setIslam=new Set(["Muhammad","ʿĪsā","Mūsā","Ibrāhīm","Nūḥ","Dāw
   "Māturīdiyyah","Rawāfiḍ","Jahmiyyah","Murjiʾah","Khārijah","Ibāḍiyyah","Ismāʿīliyyah","Bāṭiniyyah","Qadariyyah","Jabriyyah",
   "Ikhwān al-Muslimīn","Ḥizb al-Taḥrīr","Tablīghiyyah","Qādiriyyah","Naqshbandiyyah","Tijāniyyah","Barelwiyyah","Deobandiyyah",
   "Ahmadiyyah","Nation of Islam","Shīʿah","Nusayriyyah","Druze","Yazīdiyyah","Karrāmiyyah","Buḥayriyyah","Ḥulūliyyah",
-  "Wujūdiyyah","Ṣūfiyyah Ghulāt","Al-Qāʿidah","Dāʿish","Shabbāḥiyyah","Al-Mujassimah","Qarmatiyyah","Zaydiyyah","Batiniyyah","Khurramiyyah","Al-ʿUrwānīyyah"]);
+  "Wujūdiyyah","Ṣūfiyyah Ghulāt","Al-Qāʿidah","Dāʿish","Shabbāḥiyyah","Al-Mujassimah","Qarmatiyyah","Zaydiyyah","Batiniyyah",
+  "Khurramiyyah","Al-ʿUrwānīyyah", "Al-Islam", "Al-Iman", "Al-Ihsan", "Al-Tawhid", "Al-Salat", "Al-Zakat", "Al-Sawm", 
+  "Al-Hajj", "Al-Quran", "Al-Hadith", "Al-Shariah", "Al-Fiqh", "Al-Aqidah", "Al-Sunnah", "Al-Tasfir", "Al-Jihad", "Al-Dawah", 
+  "Al-Ummah", "Al-Masjid", "Al-Kaaba", "Al-Hijrah", "Al-Risalah", "Al-Muhajirun", "Al-Ansar", "Al-Mu'minun", "Al-Muttaqin", 
+  "Al-Sabirin","At-Tawbah","At-Taqwa","Al-Kitab","Al-Sunnah","Al-Hikmah","Al-Ma'rifah","Al-Ilm","Al-Furqan","Al-Huda","Al-Rahmah","Al-Maghfirah"]);
 
 
 
